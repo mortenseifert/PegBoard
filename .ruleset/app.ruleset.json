@@ -1,0 +1,11 @@
+{
+    "name": "App Rule Set",
+    "description": "Rule Set for this App",
+    "rules": [
+        {
+            "id": "AS0016",
+            "action": "Hidden",
+            "justification": "DataClassification property ToBeClassified should be kept hidden."
+        }
+    ]
+}
