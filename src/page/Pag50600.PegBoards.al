@@ -53,6 +53,10 @@ page 50600 "Peg Boards"
                 {
                     ApplicationArea = All;
                 }
+                field(Signature; Signature)
+                {
+                    ApplicationArea = All;
+                }
                 field(Solution; Solution)
                 {
                     ApplicationArea = All;
@@ -94,6 +98,16 @@ page 50600 "Peg Boards"
                     PegSolitareMgt.CreateJob();
                 end;
             }
+        }
+    }
+
+    views
+    {
+        view(LatestGame)
+        {
+            Caption = 'Latest';
+            Filters = where("Game No." = filter(>= 2));
+            SharedLayout = true;
         }
     }
 }
