@@ -58,7 +58,10 @@ page 50601 "Peg Board Factbox"
         Pixel: Text;
     begin
         for y := 1 to 7 do begin
-            BoardLine[y] := '';
+            if y in [1, 2, 6, 7] then
+                BoardLine[y] := ' '
+            else
+                BoardLine[y] := '';
             for i := 1 to 7 do begin
                 case CopyStr(Board, ((y - 1) * 7) + i, 1) of
                     ' ':
