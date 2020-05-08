@@ -4,6 +4,7 @@ codeunit 50600 "Peg Solitare Mgt."
 
     trigger OnRun()
     begin
+        TestField("In Queue", true);
         PegBoard := Rec;
         PegBoard."In Queue" := false;
         if IsSolved() then
@@ -31,6 +32,7 @@ codeunit 50600 "Peg Solitare Mgt."
     begin
         if PegBoard.Move = 0 then begin
             MovePeg(4, 2);
+            PegBoard.Modify();
         end else begin
             for x := 1 to 7 do
                 for y := 1 to 7 do
@@ -94,7 +96,7 @@ codeunit 50600 "Peg Solitare Mgt."
 
     local procedure TryMoveRight(x: Integer; y: Integer): Boolean
     begin
-        if y >= 6 then
+        if x >= 6 then
             exit;
         if not HasPeg(x + 1, y) then
             exit;
@@ -140,15 +142,16 @@ codeunit 50600 "Peg Solitare Mgt."
                     SetPeg(x + 2, y);
                 end;
         end;
-        NewPegBoard.Signature := CalcSignature(NewPegBoard.Board);
+        NewPegBoard."Big Signature" := CalcSignature(NewPegBoard.Board);
         if NewPegBoardIsNew() then begin
             NewPegBoard."In Queue" := true;
             NewPegBoard.Duplicate := false;
+            NewPegBoard.Insert();
         end else begin
             NewPegBoard."In Queue" := false;
             NewPegBoard.Duplicate := true;
+            //NewPegBoard.Insert();
         end;
-        NewPegBoard.Insert();
     end;
 
     local procedure RemovePeg(x: Integer; y: Integer)
@@ -186,20 +189,21 @@ codeunit 50600 "Peg Solitare Mgt."
         exit(PegBoard.Board = BoardSolutionLbl);
     end;
 
-    local procedure CalcSignature(Board: Text) Signature: Integer
+    local procedure CalcSignature(Board: Text) Signature: BigInteger
     var
         I: Integer;
+        Bit: Integer;
     begin
         for I := 1 to StrLen(Board) do begin
             case CopyStr(Board, I, 1) of
-                '0':
+                EmptyLbl:
                     begin
-                        Signature *= 2;
+                        Bit += 1;
                     end;
-                '*':
+                PegLbl:
                     begin
-                        Signature *= 2;
-                        Signature += 1;
+                        Signature += Power(2, Bit);
+                        Bit += 1;
                     end;
             end;
         end;
@@ -237,19 +241,13 @@ codeunit 50600 "Peg Solitare Mgt."
         with JobQueueEntry do begin
             SetRange("Object Type to Run", "Object Type to Run"::Codeunit);
             SetRange("Object ID to Run", Codeunit::"Peg Solitare Job");
-            if FindSet() then begin
-                repeat
-                    if not IsReadyToStart() then begin
-                        Validate(Status, Status::Ready);
-                        Modify(true);
-                    end;
-                until Next() = 0;
-            end else begin
-                CreateJob('Up');
-                CreateJob('Down');
-                CreateJob('Left');
-                CreateJob('Right');
-            end;
+            if FindFirst() then begin
+                if not IsReadyToStart() then begin
+                    Validate(Status, Status::Ready);
+                    Modify(true);
+                end;
+            end else
+                CreateJob('S1000');
         end;
     end;
 
