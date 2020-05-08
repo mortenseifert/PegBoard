@@ -207,12 +207,12 @@ codeunit 50600 "Peg Solitare Mgt."
 
     local procedure NewPegBoardIsNew(): Boolean
     var
-        PegBoardSeen: Record "Peg Board Seen";
+        PegBoardSeenBig: Record "Peg Board Seen Big";
     begin
-        PegBoardSeen.Init();
-        PegBoardSeen."Game No." := NewPegBoard."Game No.";
-        PegBoardSeen.Signature := NewPegBoard.Signature;
-        exit(PegBoardSeen.Insert())
+        PegBoardSeenBig.Init();
+        PegBoardSeenBig."Game No." := NewPegBoard."Game No.";
+        PegBoardSeenBig."Big Signature" := NewPegBoard."Big Signature";
+        exit(PegBoardSeenBig.Insert())
     end;
 
     procedure InitBoard(NewPegBoard: Record "Peg Board")

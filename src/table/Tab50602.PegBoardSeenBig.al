@@ -1,8 +1,6 @@
-table 50601 "Peg Board Seen"
+table 50602 "Peg Board Seen Big"
 {
     Caption = 'Peg Solitare';
-    ObsoleteState = Pending;
-    ObsoleteReason = 'Using BigInteger. Use "Peg Board Seen Big"';
 
     fields
     {
@@ -10,7 +8,7 @@ table 50601 "Peg Board Seen"
         {
             Caption = 'Game No.';
         }
-        field(2; "Signature"; Integer)
+        field(2; "Big Signature"; BigInteger)
         {
             Caption = 'Signature';
         }
@@ -18,7 +16,7 @@ table 50601 "Peg Board Seen"
 
     keys
     {
-        key(PK; "Game No.", Signature)
+        key(PK; "Game No.", "Big Signature")
         {
             Clustered = true;
         }

@@ -53,7 +53,7 @@ page 50600 "Peg Boards"
                 {
                     ApplicationArea = All;
                 }
-                field(Signature; Signature)
+                field(Signature; "Big Signature")
                 {
                     ApplicationArea = All;
                 }
@@ -91,11 +91,45 @@ page 50600 "Peg Boards"
                 var
                     PegSolitareMgt: Codeunit "Peg Solitare Mgt.";
                     PegBoard: Record "Peg Board";
+                    LblNewGame: Label 'Would you like to create a new game?';
                 begin
-                    PegSolitareMgt.InitBoard();
-                    CurrPage.Update();
+                    if Confirm(LblNewGame, false) then begin
+                        PegSolitareMgt.InitBoard();
+                        CurrPage.Update();
 
-                    PegSolitareMgt.CreateJob();
+                        PegSolitareMgt.CreateJob();
+                    end;
+                end;
+            }
+            action(NextMove)
+            {
+                Caption = 'Next move';
+                ApplicationArea = All;
+                Image = MovementWorksheet;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                PromotedOnly = false;
+                RunObject = codeunit "Peg Solitare Mgt.";
+                RunPageOnRec = true;
+            }
+            action(BatchMove)
+            {
+                Caption = 'Batch next move';
+                ApplicationArea = All;
+                Image = ExecuteBatch;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                PromotedOnly = false;
+
+                trigger OnAction()
+                var
+                    JobQueueEntry: Record "Job Queue Entry";
+                begin
+                    JobQueueEntry.Init();
+                    JobQueueEntry."Parameter String" := 'S1000';
+                    Codeunit.Run(Codeunit::"Peg Solitare Job", JobQueueEntry);
                 end;
             }
         }
@@ -106,7 +140,8 @@ page 50600 "Peg Boards"
         view(LatestGame)
         {
             Caption = 'Latest';
-            Filters = where("Game No." = filter(>= 2));
+            Filters = where("Game No." = const(6), "In Queue" = const(true));
+            OrderBy = descending(Move);
             SharedLayout = true;
         }
     }

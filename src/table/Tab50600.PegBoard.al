@@ -55,10 +55,16 @@ table 50600 "Peg Board"
         field(13; Signature; Integer)
         {
             Caption = 'Signature';
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Changed to BigInteger. Use "Big Signature"';
         }
         field(14; "Duplicate"; Boolean)
         {
             Caption = 'Duplicate';
+        }
+        field(15; "Big Signature"; BigInteger)
+        {
+            Caption = 'Signature';
         }
     }
 
@@ -69,6 +75,8 @@ table 50600 "Peg Board"
             Clustered = true;
         }
         key(GameNo; "Game No.")
+        { }
+        key(GameNoMoveInQueue; "Game No.", Move, "In Queue")
         { }
     }
 
